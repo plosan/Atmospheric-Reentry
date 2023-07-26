@@ -32,14 +32,19 @@ Upon execution, the script will prompt for planet number (1 - Earth, 2 - Mars). 
 </ul> 
 
 
+## Figures
+
 ### Lifting reentry
 
-
+<p align="center">
+  <img src="./readme_images/lifting.svg">
+</p>
 
 ### Ballistic reentry
 
-
-## Figures
+<p align="center">
+  <img src="./readme_images/ballistic.svg">
+</p>
 
 ## References
 
