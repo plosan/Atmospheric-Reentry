@@ -1,0 +1,86 @@
+\usepackage[catalan]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{amsmath} 
+\usepackage{empheq}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{csquotes}
+\setquotestyle{spanish}
+\usepackage{titling}
+\usepackage{titlesec}
+\usepackage{courier}
+\usepackage{textcomp}
+\usepackage{makeidx}
+\usepackage{mathrsfs}
+\usepackage{caption}
+\usepackage{lscape}
+\usepackage{chngcntr}
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage[demo]{graphicx}
+\usepackage{caption}
+\usepackage{lastpage}
+\usepackage{afterpage}
+\usepackage{multirow}
+\usepackage{subcaption}
+%\usepackage{csquotes}
+\usepackage{lipsum}
+\geometry{a4paper, left = 25mm, right = 25mm, top = 30mm, bottom = 30mm}
+\usepackage{cancel}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor=green,
+}
+\usepackage{placeins} %FloatBarrier
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{referencias.bib}
+
+% Renewcommands
+\captionsetup{labelfont=bf}
+\captionsetup{labelsep=space}
+
+% Comandos matemáticos
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\z}{\mathbb{Z}}
+\newcommand{\n}{\mathbb{N}}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}  % Valor absoluto
+\DeclarePairedDelimiter\norm{\lVert}{\rVert} % Norma
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+\makeatother
+
+\newcommand{\BC}{\mathrm{BC}}
+
+% Otros
+\newcommand{\MATLAB}{\textsc{Matlab}\xspace}
+%\renewcommand\spanishtablename{Tabla}
+\renewcommand{\familydefault}{\rmdefault}
+\let\oldref\ref % Cambio en las referencias de ecuaciones
+\renewcommand{\ref}[1]{(\oldref{#1})}
+
+\setitemize{topsep=0pt}
+\setitemize{itemsep=0pt}
+\setlength{\parskip}{5pt}
+\setlength{\floatsep}{15pt}
+\setlength\headheight{30pt}
+
+\renewcommand{\labelitemi}{$\bullet$}
+
+\newcommand*{\eg}{e.g.\@\xspace}
+\newcommand*{\ie}{i.e.\@\xspace}
+
+\numberwithin{equation}{section}

@@ -1,0 +1,175 @@
+
+\section{Resolució numèrica}
+
+\subsection{Resolució numèrica de sistemes d'equacions diferencials}
+
+Es considera un problema de valor inicial com el següent:
+\begin{empheq}[left = \empheqlbrace]{align}
+    \frac{\dd y}{\dd x} &= f \left( x, y(x) \right) \\
+    y(a) &= y_0
+\end{empheq}
+amb $x \in \left[ a, b \right]$, $y(x) \in \mathbb{R}$ i $f \colon \left[ a, b \right] \times \mathbb{R} \to \mathbb{R}$. En general, la major part d'equacions diferencials que es plantegen no tenen una solució explícita $y(x)$. No obstant, donats punts $x_0, \ldots, x_n \in \left[ a, b \right]$, es pot obtenir el valor que pren $y(x)$ en aquests \cite{bonet}. 
+
+Els algorismes de Runke-Kutta venen donats per \cite{bonet}:
+\begin{empheq}[left = \empheqlbrace]{align}
+    y(a) &= y_0 \\
+    y_{n+1} &= y_n + h \sum_{i = 1}^{k} c_i k_i^n, \quad 0 \leq n \leq N-1 
+\end{empheq}
+amb $k \in \mathbb{N}$ definit prèviament, i els coeficients $k_i^n$ són funcions definides per:
+\begin{empheq}[left = \empheqlbrace]{align}
+    k_1^n &= f \left( x_n, y_n \right) \\
+    k_i^n &= f \left( x_n + a_i h, y_n + h \sum_{j=1}^{i-1} b_{ij} k_j^n \right), \quad 2 \leq i \leq k
+\end{empheq}
+L'algorisme RK4, és l'algorisme de Runge-Kutta que s'obté per $k = 4$. Aquest s'escriu com:
+\begin{empheq}[left = \empheqlbrace]{align}
+    y(a) &= y_0 \\
+    y_{n+1} &= y_n + \frac{h}{6} \left( k_1^n + 2 k_2^n + 2 k_3^n + k_4^n \right), \quad 0 \leq n \leq N-1
+\end{empheq}
+on els coeficients es defineixen per:
+\begin{empheq}[left = \empheqlbrace]{align}
+    k_1^n &= f \left( x_n, y_n \right) \\
+    k_2^n &= f \left( x_n + \frac{h}{2}, y_n + \frac{h}{2} k_1^n \right) \\
+    k_3^n &= f \left( x_n + \frac{h}{2}, y_n + \frac{h}{2} k_2^n \right) \\
+    k_4^n &= f \left( x_n + h, y_n + h k_3^n \right)
+\end{empheq}
+Intuïtivament, els mètodes de Runke-Kutta discretitzen el domini definit per la variable independent $x$ en passes definides per $h$, i per a cada punt $x_n$ de la discretització, calculen el valor de $y'$ en punts de l'entorn de $x_n$, \ie, els coeficients $k_i^n$. A partir del valor actual $y_n$ de la funció i dels coeficients, es calcula el següent valor de la funció, $y_{n+1}$. 
+
+Els mètodes numèrics són, en general, aproximacions a la solució analítica del problema. La precisió del l'aproximació depèn de $h$. No obstant, el mètode RK4 és d'ordre global 4, és a dir, l'error és de l'ordre de $\mathcal{O}(h^4)$. Això implica que, si es defineix $h' = h / 2$ i s'aplica novament l'algorisme RK4, l'error es reduirà $16$ vegades.
+
+Els mètodes de Runge-Kutta i, en particular el mètode RK4, són fàcilment generalitzables a sistemes d'equacions diferencials ordinàries, com es veurà a continuació.
+
+\subsection{Resolució numèrica de la trajectòria balística}
+
+El sistema d'equacions diferencials donat per \eqref{eq:derivada_V_h_ballistic}, \eqref{eq:derivada_gamma_h_ballistic}, \eqref{eq:derivada_t_h_ballistic} i \eqref{eq:derivada_r_h_ballistic}, es pot reescriure com segueix:
+\begin{align}
+    \frac{\dd V}{\dd h} &= f_1 \left( h, V, \gamma, t, r \right)        \\
+    \frac{\dd \gamma}{\dd h} &= f_2 \left( h, V, \gamma, t, r \right)   \\
+    \frac{\dd t}{\dd h} &= f_3 \left( h, V, \gamma, t, r \right)        \\
+    \frac{\dd r}{\dd h} &= f_4 \left( h, V, \gamma, t, r \right)
+\end{align}
+Les condicions de contorn són l'altura inicial $H_0$, la velocitat inicial $V(H_0) = V_0$, l'angle de descens inicial $\gamma(H_0) = \gamma_0$ i l'altura final $H_f = 0$.
+
+L'altitud pot prendre valors a l'interval $\mathcal{I} = \left[ H_f, H_0 \right]$. Es divideix l'interval $\mathcal{I}$ amb una discretització uniforme en $N+1$ punts, amb una separació $\Delta h$. Atès que es tracta d'una trajectòria de descens, es té que $h_0 = H_0$, $h_{N+1} = H_0$ i  $h_n = h_0 + n \, \Delta h$. L'algorisme ha de fer $N+1$ iteracions, començant en $h_0$ i acabant en $h_{N+1}$. Per a la iteració $n$, amb $0 \leq n \leq N$, es tenen els següents coeficients primers:
+\begin{align}
+    i_1^n &= f_1 \left( h_n, V_n, \gamma_n, t_n, r_n \right) \\
+    j_1^n &= f_2 \left( h_n, V_n, \gamma_n, t_n, r_n \right) \\
+    k_1^n &= f_3 \left( h_n, V_n, \gamma_n, t_n, r_n \right) \\
+    l_1^n &= f_4 \left( h_n, V_n, \gamma_n, t_n, r_n \right) 
+\end{align}
+Els coeficients segons són:
+\begin{align}
+    i_2^n &= f_1 \left( h_n + \frac{\Delta h}{2}, V_n + \frac{\Delta h}{2} i_1^n, 
+    \gamma_n + \frac{\Delta h}{2} j_1^n, t_n + \frac{\Delta h}{2} k_1^n, r_n + \frac{\Delta h}{2} l_1^n \right) \\
+    j_2^n &= f_2 \left( h_n + \frac{\Delta h}{2}, V_n + \frac{\Delta h}{2} i_1^n, 
+    \gamma_n + \frac{\Delta h}{2} j_1^n, t_n + \frac{\Delta h}{2} k_1^n, r_n + \frac{\Delta h}{2} l_1^n \right) \\
+    k_2^n &= f_3 \left( h_n + \frac{\Delta h}{2}, V_n + \frac{\Delta h}{2} i_1^n, 
+    \gamma_n + \frac{\Delta h}{2} j_1^n, t_n + \frac{\Delta h}{2} k_1^n, r_n + \frac{\Delta h}{2} l_1^n \right) \\
+    l_2^n &= f_4 \left( h_n + \frac{\Delta h}{2}, V_n + \frac{\Delta h}{2} i_1^n, 
+    \gamma_n + \frac{\Delta h}{2} j_1^n, t_n + \frac{\Delta h}{2} k_1^n, r_n + \frac{\Delta h}{2} l_1^n \right)
+\end{align}
+Les expressions pels coeficients tercers són:
+\begin{align}
+    i_3^n &= f_1 \left( h_n + \frac{\Delta h}{2}, V_n + \frac{\Delta h}{2} i_2^n, 
+    \gamma_n + \frac{\Delta h}{2} j_2^n, t_n + \frac{\Delta h}{2} k_2^n, r_n + \frac{\Delta h}{2} l_2^n \right) \\
+    j_3^n &= f_2 \left( h_n + \frac{\Delta h}{2}, V_n + \frac{\Delta h}{2} i_2^n, 
+    \gamma_n + \frac{\Delta h}{2} j_2^n, t_n + \frac{\Delta h}{2} k_2^n, r_n + \frac{\Delta h}{2} l_2^n \right) \\
+    k_3^n &= f_3 \left( h_n + \frac{\Delta h}{2}, V_n + \frac{\Delta h}{2} i_2^n, 
+    \gamma_n + \frac{\Delta h}{2} j_2^n, t_n + \frac{\Delta h}{2} k_2^n, r_n + \frac{\Delta h}{2} l_2^n \right) \\
+    l_3^n &= f_4 \left( h_n + \frac{\Delta h}{2}, V_n + \frac{\Delta h}{2} i_2^n, 
+    \gamma_n + \frac{\Delta h}{2} j_2^n, t_n + \frac{\Delta h}{2} k_2^n, r_n + \frac{\Delta h}{2} l_2^n \right)
+\end{align}
+Els coeficients quarts es calculen com:
+\begin{align}
+    i_4^n &= f_1 \left( h_n + \Delta h, V_n + \Delta h \, i_3^n, \gamma_n + \Delta h \, j_3^n, 
+    t_n + \Delta h \, k_3^n, r_n + \Delta h \, l_3^n \right) \\
+    j_4^n &= f_2 \left( h_n + \Delta h, V_n + \Delta h \, i_3^n, \gamma_n + \Delta h \, j_3^n, 
+    t_n + \Delta h \, k_3^n, r_n + \Delta h \, l_3^n \right) \\
+    k_4^n &= f_3 \left( h_n + \Delta h, V_n + \Delta h \, i_3, \gamma_n + \Delta h \, j_3^n, 
+    t_n + \Delta h \, k_3^n, r_n + \Delta h \, l_3^n \right) \\
+    l_4^n &= f_4 \left( h_n + \Delta h, V_n + \Delta h \, i_3^n, \gamma_n + \Delta h \, j_3^n, 
+    t_n + \Delta h \, k_3^n, r_n + \Delta h \, l_3^n \right)
+\end{align}
+Finalment, es calculen les variables per $h_{n+1}$:
+\begin{align}
+    V_{n+1} &= V_n              + \frac{\Delta h}{6} \left( i_1^n + 2 i_2^n + 2 i_3^n + i_4^n \right) \\
+    \gamma_{n+1} &= \gamma_n    + \frac{\Delta h}{6} \left( j_1^n + 2 j_2^n + 2 j_3^n + j_4^n \right) \\
+    t_{n+1} &= t_n              + \frac{\Delta h}{6} \left( k_1^n + 2 k_2^n + 2 k_3^n + k_4^n \right) \\
+    r_{n+1} &= r_n              + \frac{\Delta h}{6} \left( l_1^n + 2 l_2^n + 2 l_3^n + l_4^n \right)
+\end{align}
+
+\subsection{Resolució numèrica de la trajectòria sustentadora}
+
+El sistema d'equacions diferencials donat per \eqref{eq:derivada_V_t_lifting}, \eqref{eq:derivada_gamma_t_lifting}, \eqref{eq:derivada_h_t_lifting}, \eqref{eq:derivada_r_t_lifting}, es poden reescriure com a funcions:
+\begin{align}
+    \frac{\dd V}{\dd t} &=      g_1 \left( t, V, \gamma, h, r \right) \\
+    \frac{\dd \gamma}{\dd t} &= g_2 \left( t, V, \gamma, h, r \right) \\
+    \frac{\dd h}{\dd t} &=      g_3 \left( t, V, \gamma, h, r \right) \\
+    \frac{\dd r}{\dd t} &=      g_4 \left( t, V, \gamma, h, r \right)
+\end{align}
+Les condicions sobre el sistema són l'altitud inicial $h(t_0) = H_0$, la velocitat inicial $V(t_0) = V_0$, l'angle de descens inicial $\gamma(t_0) = \gamma_0$ i l'altitud final en l'instant final $h(t_f) = 0$.
+
+Novament es fa una discretització temporal del domini del temps, $\mathcal{I} = \left[ t_0, t_f \right]$, en $N+1$ instants separats per un temps $\Delta t$. Per a la iteració $n$, amb $0 \leq n \leq N$, els coeficients es calculen com:
+\begin{align}
+    i_1^n &= g_1 \left( t_n, V_n, \gamma_n, h_n, r_n \right) \\
+    j_1^n &= g_2 \left( t_n, V_n, \gamma_n, h_n, r_n \right) \\
+    k_1^n &= g_3 \left( t_n, V_n, \gamma_n, h_n, r_n \right) \\
+    l_1^n &= g_4 \left( t_n, V_n, \gamma_n, h_n, r_n \right) 
+\end{align}
+\begin{align}
+    i_2^n &= g_1 \left( t_n + \frac{\Delta t}{2}, V_n + \frac{\Delta t}{2} i_1^n, 
+    \gamma_n + \frac{\Delta t}{2} j_1^n, h_n + \frac{\Delta t}{2} k_1^n, r_n + \frac{\Delta t}{2} l_1^n \right) \\
+    j_2^n &= g_2 \left( t_n + \frac{\Delta t}{2}, V_n + \frac{\Delta t}{2} i_1^n, 
+    \gamma_n + \frac{\Delta t}{2} j_1^n, h_n + \frac{\Delta t}{2} k_1^n, r_n + \frac{\Delta t}{2} l_1^n \right) \\
+    k_2^n &= g_3 \left( t_n + \frac{\Delta t}{2}, V_n + \frac{\Delta t}{2} i_1^n, 
+    \gamma_n + \frac{\Delta t}{2} j_1^n, h_n + \frac{\Delta t}{2} k_1^n, r_n + \frac{\Delta t}{2} l_1^n \right) \\
+    l_2^n &= g_4 \left( t_n + \frac{\Delta t}{2}, V_n + \frac{\Delta t}{2} i_1^n, 
+    \gamma_n + \frac{\Delta t}{2} j_1^n, h_n + \frac{\Delta t}{2} k_1^n, r_n + \frac{\Delta t}{2} l_1^n \right)
+\end{align}
+\begin{align}
+    i_3^n &= g_1 \left( t_n + \frac{\Delta t}{2}, V_n + \frac{\Delta t}{2} i_2^n, 
+    \gamma_n + \frac{\Delta t}{2} j_2^n, h_n + \frac{\Delta t}{2} k_2^n, r_n + \frac{\Delta t}{2} l_2^n \right) \\
+    j_3^n &= g_2 \left( t_n + \frac{\Delta t}{2}, V_n + \frac{\Delta t}{2} i_2^n, 
+    \gamma_n + \frac{\Delta t}{2} j_2^n, h_n + \frac{\Delta t}{2} k_2^n, r_n + \frac{\Delta t}{2} l_2^n \right) \\
+    k_3^n &= g_3 \left( t_n + \frac{\Delta t}{2}, V_n + \frac{\Delta t}{2} i_2^n, 
+    \gamma_n + \frac{\Delta t}{2} j_2^n, h_n + \frac{\Delta t}{2} k_2^n, r_n + \frac{\Delta t}{2} l_2^n \right) \\
+    l_3^n &= g_4 \left( t_n + \frac{\Delta t}{2}, V_n + \frac{\Delta t}{2} i_2^n, 
+    \gamma_n + \frac{\Delta t}{2} j_2^n, h_n + \frac{\Delta t}{2} k_2^n, r_n + \frac{\Delta t}{2} l_2^n \right)
+\end{align}
+\begin{align}
+    i_4^n &= g_1 \left( t_n + \Delta t, V_n + \Delta t \, i_3^n, \gamma_n + \Delta t \, j_3^n, 
+    h_n + \Delta t \, k_3^n, r_n + \Delta t \, l_3^n \right) \\
+    j_4^n &= g_2 \left( t_n + \Delta t, V_n + \Delta t \, i_3^n, \gamma_n + \Delta t \, j_3^n, 
+    h_n + \Delta t \, k_3^n, r_n + \Delta t \, l_3^n \right) \\
+    k_4^n &= g_3 \left( t_n + \Delta t, V_n + \Delta t \, i_3, \gamma_n + \Delta t \, j_3^n, 
+    h_n + \Delta t \, k_3^n, r_n + \Delta t \, l_3^n \right) \\
+    l_4^n &= g_4 \left( t_n + \Delta t, V_n + \Delta t \, i_3^n, \gamma_n + \Delta t \, j_3^n, 
+    h_n + \Delta t \, k_3^n, r_n + \Delta t \, l_3^n \right)
+\end{align}
+Finalment, el valor de les magnituds en $t_{n+1}$ és:
+\begin{align}
+    V_{n+1} &= V_n              + \frac{\Delta t}{6} \left( i_1^n + 2 i_2^n + 2 i_3^n + i_4^n \right) \\
+    \gamma_{n+1} &= \gamma_n    + \frac{\Delta t}{6} \left( j_1^n + 2 j_2^n + 2 j_3^n + j_4^n \right) \\
+    h_{n+1} &= t_n              + \frac{\Delta t}{6} \left( k_1^n + 2 k_2^n + 2 k_3^n + k_4^n \right) \\
+    r_{n+1} &= r_n              + \frac{\Delta t}{6} \left( l_1^n + 2 l_2^n + 2 l_3^n + l_4^n \right)
+\end{align}
+
+\subsection{Càlcul de variables derivades}
+
+Una vegada obtingudes les variables principals del problema, \ie, $h$, $V$, $\gamma$, $t$ i $r$, és necessari calcular altres magnituds derivades d'aquestes i de les condicions atmosfèriques. 
+
+En el cas de l'acceleració, s'utilitza un esquema de segon ordre \cite{kundu_2}, definit per
+\begin{equation} \label{eq:aceleracion_segundo_orden}
+    a_n = \left( \frac{\dd V}{\dd t} \right)_n = 
+    \frac{V_{n+1} - V_{n+1}}{t_{n+1} - t_{n-1}}, \quad 1 \leq n \leq N
+\end{equation}
+Com s'observa, l'acceleració no està definida per $n \in \left\{ 0, N+1 \right\}$. En aquests casos, es pot utilitzar una diferència ``endavant'' o ``endarrere'', donades per:
+\begin{align}
+    a_0 &= \frac{V_1 - V_0}{t_1 - t_0} \\
+    a_{N+1} &= \frac{V_{N+1} - V_{N}}{t_{N+1} - t_{N}}
+\end{align}
+No obstant, aquestes són aproximacions de primer ordre que redueixen la precisió donada per \eqref{eq:aceleracion_segundo_orden}, \cite{kundu_2}. Per aquest motiu, es considera que en aquests punts extrems l'acceleració no està definida.
+
+Es considera el cas d'una variable escalar $\phi$ qualsevol que depèn de $m$ variables $\sigma^1, \ldots, \sigma^m$. Pel càlcul de $\phi$ en el punt $n$, amb $0 \leq n \leq N+1$, s'empra el valor de les $m$ variables en el mateix punt, \ie,
+\begin{equation} \label{eq:calculo_magnitud_phi}
+    \phi_n = \phi \left( \sigma_n^1, \ldots, \sigma_n^m \right)
+\end{equation}
